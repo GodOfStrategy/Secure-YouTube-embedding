@@ -1,0 +1,169 @@
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Content Security Policy -->
+<meta http-equiv="Content-Security-Policy"
+      content="
+        default-src 'self';
+        frame-src https://www.youtube.com https://www.youtube-nocookie.com;
+        script-src 'self';
+        style-src 'self' 'unsafe-inline';
+        img-src 'self' https://i.ytimg.com;
+      ">
+
+<title>Secure Movie Trailer Embed</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #111;
+    color: white;
+    margin: 0;
+    padding: 20px;
+}
+
+.trailer-container {
+    max-width: 800px;
+    margin: auto;
+    background: #000;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.trailer-wrapper {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%;
+    background: #000;
+}
+
+.trailer-wrapper iframe,
+.trailer-wrapper img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+.placeholder {
+    cursor: pointer;
+    object-fit: cover;
+}
+
+.play-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 60px;
+    color: white;
+    pointer-events: none;
+}
+
+.fallback {
+    text-align: center;
+    padding: 30px;
+    background: #222;
+    color: #ccc;
+}
+</style>
+</head>
+<body>
+
+<h1>Movie Trailer</h1>
+
+<div id="trailer" class="trailer-container"></div>
+
+<script>
+/* Video ID received from API or database */
+const rawVideoId = "dQw4w9WgXcQ";
+
+/* Validate YouTube video ID (11 characters) */
+function isValidYouTubeId(id) {
+    return /^[a-zA-Z0-9_-]{11}$/.test(id);
+}
+
+/* Show fallback message */
+function showFallback(container) {
+    container.innerHTML = "";
+    const div = document.createElement("div");
+    div.className = "fallback";
+    div.textContent = "Trailer unavailable. Please check back later.";
+    container.appendChild(div);
+}
+
+/* Create secure iframe */
+function createIframe(videoId) {
+    const iframe = document.createElement("iframe");
+
+    iframe.src =
+        `https://www.youtube-nocookie.com/embed/${encodeURIComponent(videoId)}?rel=0`;
+
+    iframe.loading = "lazy";
+    iframe.allow =
+        "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+    iframe.allowFullscreen = true;
+    iframe.referrerPolicy = "strict-origin-when-cross-origin";
+    iframe.title = "Movie Trailer";
+
+    return iframe;
+}
+
+/* Render placeholder thumbnail first */
+function renderTrailer(videoId) {
+    const container = document.getElementById("trailer");
+
+    if (!isValidYouTubeId(videoId)) {
+        console.warn("Invalid YouTube ID");
+        showFallback(container);
+        return;
+    }
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "trailer-wrapper";
+
+    const thumbnail = document.createElement("img");
+    thumbnail.src = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+    thumbnail.alt = "Trailer Thumbnail";
+    thumbnail.className = "placeholder";
+    thumbnail.loading = "lazy";
+
+    const playButton = document.createElement("div");
+    playButton.className = "play-button";
+    playButton.textContent = "▶";
+
+    wrapper.appendChild(thumbnail);
+    wrapper.appendChild(playButton);
+    container.appendChild(wrapper);
+
+    /* Load iframe only when clicked */
+    wrapper.addEventListener("click", () => {
+        const iframe = createIframe(videoId);
+        iframe.onerror = () => showFallback(container);
+        wrapper.replaceChildren(iframe);
+    });
+}
+
+/* Load trailer only when section enters viewport */
+const observer = new IntersectionObserver((entries, obs) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            renderTrailer(rawVideoId);
+            obs.disconnect();
+        }
+    });
+}, {
+    rootMargin: "200px"
+});
+
+observer.observe(document.getElementById("trailer"));
+</script>
+
+</body>
+</html>
+
