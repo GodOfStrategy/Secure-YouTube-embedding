@@ -1,0 +1,79 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: clamp(12px, 3vw, 24px);
+    background: #111;
+    color: #ffffff;
+    font-family: 'Inter', Arial, sans-serif;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: clamp(20px, 4vw, 32px);
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    font-weight: 700;
+}
+
+.trailer-container {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+
+.trailer-wrapper {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%; /* 16:9 */
+    background: #000;
+    cursor: pointer;
+}
+
+.trailer-wrapper iframe,
+.trailer-wrapper img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+.placeholder {
+    object-fit: cover;
+}
+
+.play-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: clamp(40px, 8vw, 72px);
+    color: #ffffff;
+    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.8);
+    pointer-events: none;
+}
+
+.fallback {
+    text-align: center;
+    padding: clamp(24px, 5vw, 40px) 20px;
+    background: #1f1f1f;
+    color: #cccccc;
+    font-size: clamp(1rem, 2.5vw, 1.15rem);
+    line-height: 1.6;
+}
+
+/* Extra small phones */
+@media (max-width: 480px) {
+    .trailer-container {
+        border-radius: 8px;
+    }
+}
